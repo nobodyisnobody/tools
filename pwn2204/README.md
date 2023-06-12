@@ -1,6 +1,6 @@
 ## PWN2204 docker for pwning task,  based on ubuntu 22.04
 
-this is a docker with all the tools setup and configurer for pwning task in ctf.
+this is a docker with all the tools setup and configured for pwning tasks in ctf.
 
 here are various tools installed for pwning tasks
 
@@ -14,8 +14,10 @@ ROPGadget , ropper
 pwndbg
 pwninit (with a standard pwninit template that you can edit)
 various config file , for tmux, screen, to allowed scroll with mouse, edit lines..
+
 libc for various arch,  arm, mips, aarch64, riscv64, etc...
 qemu-binfmt set for running executable from any arch from pwntools
+
 qemu for debugging kernels and emulate binaries of various arch
 ltrace, sotrace, 
 and may other things
