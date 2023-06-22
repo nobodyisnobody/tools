@@ -2,18 +2,18 @@
 	.cpu                cortex-m0
 	.thumb
 
-/* License: Public Domain - I cannot be held responsible for what it does or does not do if you use it, whether it's modified or not. */
 
-/* Entry point = unlz4. On entry: r0 = source, r1 = destination. The first two bytes of the source must contain the length of the compressed data. */
-
+/* Entry point = lz4dec
+On entry:
+	r0 = compressed data
+	r1 = destination buffer
+	r2 = compressed data length
+*/
 		.func lz4dec
-		.global lz4dec,lz4dec_len
+		.global lz4dec
 		.thumb_func
 
-lz4dec:
-		ldrh r2,[r0]             /* get length of compressed data */
-		adds                r0,r0,#2            /* advance source pointer */
-lz4dec_len:	push                {r4-r6,lr}          /* save r4, r5, r6 and return-address */
+lz4dec:		push                {r4-r6,lr}          /* save r4, r5, r6 and return-address */
 		adds                r5,r2,r0            /* point r5 to end of compressed data */
 getToken:	ldrb                r6,[r0]             /* get token */
 		adds                r0,r0,#1            /* advance source pointer */

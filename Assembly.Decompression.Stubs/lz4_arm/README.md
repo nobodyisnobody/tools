@@ -2,7 +2,7 @@ Using the decompressor is quite easy. When calling the routine, you just need to
 r1 to the address in RAM, where you want the decompressed data to go,
 r2 contains the length of compressed data
 
-the decompression function is 92 bytes
+the decompression function is only 88 bytes
 
 to use it from C:
 
