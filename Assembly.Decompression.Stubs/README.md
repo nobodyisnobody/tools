@@ -276,22 +276,23 @@ Lend:
     ret x15
 ```
 
-in file `lz4dec_arm.s` you can find the arm (Cortex-M0) version which is only 92 bytes long.
+in file `lz4dec_arm.s` you can find the arm (Cortex-M0) version which is only 88 bytes long.
 
 ```assembly
 	.syntax             unified
 	.cpu                cortex-m0
 	.thumb
-/* Entry point = lz4dec.
-On entry: 
-r0 = source
-r1 = destination. The first two bytes of the source must contain the length of the compressed data.
-r2 = length of source compressed data */
+/* Entry point = lz4dec
+On entry:
+	r0 = compressed data
+	r1 = destination buffer
+	r2 = compressed data length
+*/
 		.func lz4dec
-		.global lz4dec,lz4dec_len
+		.global lz4dec
 		.thumb_func
 
-lz4dec:	push                {r4-r6,lr}          /* save r4, r5, r6 and return-address */
+lz4dec:		push                {r4-r6,lr}          /* save r4, r5, r6 and return-address */
 		adds                r5,r2,r0            /* point r5 to end of compressed data */
 getToken:	ldrb                r6,[r0]             /* get token */
 		adds                r0,r0,#1            /* advance source pointer */
@@ -312,7 +313,7 @@ getOffset:	ldrb                r3,[r0,#0]          /* get match offset's low byt
 		bl                  getLength           /* get length of match data */
 		adds                r4,r4,#4            /* minimum match length is 4 bytes */
 		bl                  copyData            /* copy match data (r2=src, r1=dst, r4=len) */
-		cmp                 r0,r5               /* check if we reached the end of the compressed data*/
+		cmp                 r0,r5               /* check if we've reached the end of the compressed data */
 		blt                 getToken            /* if not, go get the next token */
 		pop                 {r4-r6,pc}          /* restore r4, r5 and r6, then return */
 
