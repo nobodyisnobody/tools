@@ -365,11 +365,108 @@ With only 60 bytes you can appreciate the code density of x86/x86_64 assembly,
 
 with a lot of one byte instructions, it is by far the smallest one..
 
+------
 
+## 3- ZX0 Compression
+
+ZX0 is a very good compression algorithm designed by Einar Saukas (https://github.com/einar-saukas/ZX0), originally to be used on ZX80 processor,
+
+and that has been adapted to many 8bit / 16bit architectures..very good for democoding, intros, programs , shellcodes..
+
+It is also based on **LZ77/LZSS**, and also use **Elias Gamma Coding** (https://en.wikipedia.org/wiki/Elias_gamma_coding) for coding length of matches and offsets.
+
+**Elias Gamma Coding** is a way of storing integers using the minimal bits needed to represent them when the upper bound is not known.
+
+Actually ZX0 coding often outperform Deflate and LZ4, it depends on the data, it seems to works better on small data , so it's good for our goal.
+
+If we use it on the same binary than we used for our previous tests, we can see that in this case ZX0 outperforms all other algorithms.. but it depends of the data of course:
+
+| Compressor     | Ratio | Compressed | Original |
+| -------------- | ----- | ---------- | -------- |
+| RLE (improved) | 2,083 | 6617       | 13784    |
+| lz4c -1        | 2,877 | 4791       | 13784    |
+| lz4c -hc       | 3,335 | 4132       | 13784    |
+| gzip -1        | 3,776 | 3650       | 13784    |
+| gzip -9        | 4,205 | 3278       | 13784    |
+| ZX0            | 4.504 | 3060       | 13784    |
+
+I found no x86 64 Bits implementation online, so I coded mine using this one (https://github.com/emmanuel-marty/unzx0_x86) , a port on 8088 as a base.
+
+the result for my ZX0 decompressor for x86_64, is only 89 bytes long:
+
+```assembly
+	.intel_syntax noprefix
+	.global zx0_decompress
+/* zx0_decompress(const void *dst, void *src); */
+/* rdi = dst, destination buffer */
+/* rsi = src, compressed data */
+zx0_decompress:
+	cld                     /* make string operations go forward */
+    mov     al,0x80         /* initialize empty bit queue */
+                                /* plus bit to roll into carry */
+	push -1
+	pop 	rdx           /* initialize rep-offset to 1 */
+.literals:
+	call    .get_elias     /* read number of literals to copy */
+	rep     movsb           /* copy literal bytes */
+
+	add     al,al           /* shift bit queue, and high bit into carry */
+	jc      .get_offset     /* if 1: read offset, if 0: rep-match */
+	call    .get_elias      /* read rep-match length (starts at 1) */
+.copy_match:
+	push rsi              /* save rsi (current pointer to compressed data) */
+	lea rsi,[rdi+rdx]	/* point to destination in rdi + rdx */
+	rep     movsb           /* copy matched bytes */
+	pop rsi
+
+	add     al,al           /* read 'literal or match' bit */
+	jnc     .literals       /* if 0: go copy literals */
+.get_offset:
+	mov     cl,0xfe         /* initialize value to 0xFE */
+	call    .elias_loop     /* read high byte of match offset */
+	inc     cl              /* obtain negative offset high byte */
+	je      .done           /* exit if EOD marker */
+	mov     dh,cl           /* transfer negative high byte into dh */
+	push 1
+	pop rcx           /* initialize match length value to 1 */
+	mov     dl,[rsi]         /* read low byte of offset + 1 bit of len */
+	inc     rsi
+	stc                     /* set high bit that is shifted into bit 15 */
+	rcr     rdx,1            /* shift len bit into carry/offset in place */
+	jc      .got_offs       /* if len bit is set, no need for more */
+	call    .elias_bt       /* read rest of elias-encoded match length */
+.got_offs:
+	inc     ecx              /* fix match length */
+	jmp     short .copy_match /* go copy match  */
+
+.get_elias:
+	push 1
+	pop rcx			/* initialize value to 1 */
+.elias_loop:
+	add     al,al           /* shift bit queue, and high bit into carry */
+	jnz     .got_bit        /* queue not empty, bits remain */
+	lodsb                   /* read 8 new bits */
+	adc     al,al           /* shift bit queue, and high bit into carry */
+.got_bit:
+	jc      .got_elias      /* done if control bit is 1 */
+.elias_bt:
+	add     al,al           /* read data bit */
+	adc     ecx,ecx           /* shift into cx */
+	jmp     short .elias_loop /* keep reading */
+.got_elias:
+.done:
+	ret
+```
+
+for compressing your data in ZX0 format, I will recommend you to use this program:
+
+https://github.com/emmanuel-marty/salvador
+
+It is a more modern and fast program than the original **ZX0** coder, and that generate compatible bitstream. (actually the original coder produced bad bitstreams for me, maybe because it was not made to be run on a 64 bits system ?)
 
 ------
 
-## 3- LZMA compression
+## 4- LZMA compression
 
 LZMA is a very efficient algorithm with great compression ratio, it also derivates from LZ77, but with a range coder that code with bits instead of bytes, and many more improvements..
 
