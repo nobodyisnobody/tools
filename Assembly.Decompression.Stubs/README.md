@@ -409,7 +409,6 @@ zx0_decompress:
 .literals:
 	call    .get_elias     /* read number of literals to copy */
 	rep     movsb           /* copy literal bytes */
-
 	add     al,al           /* shift bit queue, and high bit into carry */
 	jc      .get_offset     /* if 1: read offset, if 0: rep-match */
 	call    .get_elias      /* read rep-match length (starts at 1) */
@@ -418,7 +417,6 @@ zx0_decompress:
 	lea rsi,[rdi+rdx]	/* point to destination in rdi + rdx */
 	rep     movsb           /* copy matched bytes */
 	pop rsi
-
 	add     al,al           /* read 'literal or match' bit */
 	jnc     .literals       /* if 0: go copy literals */
 .get_offset:

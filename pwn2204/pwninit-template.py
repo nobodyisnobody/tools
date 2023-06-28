@@ -29,20 +29,14 @@ def rcu(d1, d2=0):
 
 rop = ROP(exe)
 
-host, port = "206.189.113.236", "30674"
+host, port = "127.0.0.1", "1337"
 
 if args.REMOTE:
   p = remote(host,port)
 else:
   if args.GDB:
     p = gdb.debug([exe.path], gdbscript = '''
-    source /root/.gdbinit-gef.py
-    gef config context.show_opcodes_size 12
-    gef config gef.always_no_pager True
-    gef config context.libc_args True
-    gef config context.libc_args_path  /root/gdb.plugins/gef-extras/scripts/libc_function_args/
-    gef config syscall-args.path /root/gdb.plugins/gef-extras/scripts/syscall_args/syscall-tables
-#    set debug-file-directory ~/gdb.plugins/glibc-all-in-one/libs/2.31-0ubuntu9.7_amd64/.debug
+    source /root/gdb.plugins/gef/gef.py
     c
      ''')
   else:
