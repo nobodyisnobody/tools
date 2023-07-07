@@ -5,7 +5,9 @@ this is a docker with all the tools setup and configured for pwning tasks in ctf
 here are various tools installed for pwning tasks
 
 gdb, gdbserver, gdb-multiarch, pwntools, gef variant from bata24 (https://github.com/bata24/gef) z3-solver, seccomp-tools, one_gadget, ROPGadget , ropper, pwndbg, 
+
 decomp2dbg (https://github.com/mahaloz/decomp2dbg) to have IDA/ghidra/binary ninja symbols and decompiled output in gef...
+
 pwninit (with a standard pwninit template that you can edit) various config file , for tmux, screen, to allowed scroll with mouse, edit lines..
 
 libc for various arch, arm, mips, aarch64, riscv64, etc... qemu-binfmt set for running executable from any arch from pwntools
@@ -18,7 +20,7 @@ if you found any problems, report it to me
 
 any improvements,...same..
 
-### usage
+### usage
 
 So first build the docker with the script build.sh
 
@@ -32,7 +34,7 @@ the docker run command export /dev/kvm to the docker for debugging kernels with 
 
 before using the docker, you will have to execute in your terminal
 
-xhost +
+`xhost +`
 
 to authorize X client connection from localhost
 
