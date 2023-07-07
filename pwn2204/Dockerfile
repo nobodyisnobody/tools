@@ -34,12 +34,13 @@ RUN python3 -m pip install --upgrade pip; \
     gem install seccomp-tools; \
     gem install one_gadget
 
-RUN cd ~/ && mkdir gdb.plugins && cd gdb.plugins && \
-    git clone https://github.com/pwndbg/pwndbg.git &&  \
+RUN cd ~/ && mkdir gdb.plugins && cd gdb.plugins &&  \
+    git clone https://github.com/pwndbg/pwndbg.git && \
     cd pwndbg && git submodule update --init --recursive && \
     sed -i "s/^git submodule/#git submodule/" ./setup.sh && \
     DEBIAN_FRONTEND=noninteractive ./setup.sh && ./setup-dev.sh && \
-    cd ~/gdb.plugins && git clone https://github.com/bata24/gef && git clone https://github.com/hugsy/gef-extras.git && cd gef && ./install.sh
+    cd ~/gdb.plugins && git clone https://github.com/bata24/gef && git clone https://github.com/hugsy/gef-extras.git && cd gef && ./install.sh \
+    cd ~/gdb.plugins && git clone https://github.com/mahaloz/decomp2dbg.git && cd decomp2dbg && python3 -m pip install . && cp d2d.py /root/.d2d.py
 
 RUN cargo install pwninit
 
@@ -49,7 +50,7 @@ COPY .screenrc /root/.screenrc
 COPY .bashrc /root/.bashrc
 COPY .gef.rc /root/.gef.rc
 
-RUN echo '#source /root/gdb.plugins/pwndbg/gdbinit.py\nsource /root/.gdbinit-gef.py' > /root/.gdbinit
+RUN echo '#source /root/gdb.plugins/pwndbg/gdbinit.py\nsource /root/.gdbinit-gef.py\nsource /root/.d2d.py' > /root/.gdbinit
 RUN apt install -qy  libc6-arm64-cross libc6-dbg-arm64-cross libstdc++6-11-dbg-arm64-cross libstdc++-11-pic-arm64-cross libc6-armhf-cross libc6-dbg-armhf-cross libstdc++6-11-dbg-armhf-cross libstdc++-11-pic-armhf-cross gcc-aarch64-linux-gnu g++-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf autoconf automake libtool flex bison
 RUN mkdir /etc/qemu-binfmt && ln -s /usr/aarch64-linux-gnu /etc/qemu-binfmt/aarch64 && ln -s /usr/arm-linux-gnueabihf /etc/qemu-binfmt/arm
 

@@ -36,7 +36,8 @@ if args.REMOTE:
 else:
   if args.GDB:
     p = gdb.debug([exe.path], gdbscript = '''
-    source /root/gdb.plugins/gef/gef.py
+    source /root/.gdbinit
+#    decompiler connect ida --host 127.0.0.1 --port 3662
     c
      ''')
   else:
