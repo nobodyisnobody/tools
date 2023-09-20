@@ -99,3 +99,21 @@ fi
 #fi
 export PATH=$PATH:/root/.cargo/bin
 alias pwninit='pwninit --template-path /root/gdb.plugins/pwninit-template.py'
+export DEBUGINFOD_URLS="https://debuginfod.ubuntu.com"
+
+echo "example of command with pwndbg:"
+echo "gdb-pwndbg -ex 'b main' -ex 'run' ./chall"
+echo
+echo "example of command with Gef:"
+echo "gdb-gef -ex 'b main' -ex 'run' ./chall"
+echo
+echo "from your solve script you can use init-pwndbg or init-gef gdb subcommands (defined in /root/.gdbinit)"
+echo "init-pwndbg need to have tmux running.."
+echo
+echo "in gdb use:   decompiler connect ida --host 127.0.0.1 --port 3662"
+echo "to connect to ida with decomp2dbg"
+echo
+echo "you can use gdb function:  openredir "/dev/pts/3"     to redir stdin,stdout,stderr, to another terminal (for pwndbg splitmind for exampleà"
+echo
+
+export TERM=screen-256color
