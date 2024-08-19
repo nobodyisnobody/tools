@@ -48,7 +48,7 @@ RUN cd ~/ && mkdir gdb.plugins && cd gdb.plugins &&  \
     DEBIAN_FRONTEND=noninteractive ./setup.sh && ./setup-dev.sh
 
 RUN cd ~/gdb.plugins && git clone https://github.com/jerdna-regeiz/splitmind
-RUN cd ~/gdb.plugins && git clone https://github.com/bata24/gef && git clone https://github.com/hugsy/gef-extras.git && ln -s gef gef.bata24.git && cd gef && ./install-minimal.sh && \
+RUN cd ~/gdb.plugins && git clone https://github.com/bata24/gef && git clone https://github.com/hugsy/gef-extras.git && ln -s gef gef.bata24.git && cd gef && chmod +x install-minimal.sh && ./install-minimal.sh && \
     python3 -m pip install --break-system-packages --upgrade lz4 zstandard git+https://github.com/clubby789/python-lzo@b4e39df && \
     python3 -m pip install --break-system-packages --upgrade git+https://github.com/marin-m/vmlinux-to-elf && \   
     python3 -m pip install --break-system-packages crccheck unicorn capstone ropper keystone-engine
