@@ -41,7 +41,7 @@ RUN cd ~/ && mkdir gdb.plugins && cd gdb.plugins &&  \
     sed -i "s/^git submodule/#git submodule/" ./setup.sh && \
     DEBIAN_FRONTEND=noninteractive ./setup.sh && ./setup-dev.sh && \
     cd ~/gdb.plugins && git clone https://github.com/jerdna-regeiz/splitmind && \
-    cd ~/gdb.plugins && git clone https://github.com/bata24/gef && git clone https://github.com/hugsy/gef-extras.git && ln -s gef gef.bata24.git && cd gef && ./install.sh && \
+    cd ~/gdb.plugins && git clone https://github.com/bata24/gef && git clone https://github.com/hugsy/gef-extras.git && ln -s gef gef.bata24.git && cd gef && chmod +x install-minimal.sh && ./install.sh && \
     cd ~/gdb.plugins && git clone https://github.com/mahaloz/decomp2dbg.git && cd decomp2dbg && python3 -m pip install . && python3 setup.py install && cp d2d.py /root/.d2d.py
 
 RUN cargo install pwninit
